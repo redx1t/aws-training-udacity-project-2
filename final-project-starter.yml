@@ -1,0 +1,10 @@
+Parameters:
+
+Resources:
+
+  ProfileWithRolesForOurApp:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      Roles:
+        - UdacityS3ReadOnlyEC2
+Outputs: 
