@@ -12,13 +12,17 @@ test the config then run the below commands to
 
 1. setup the network
 
+```
 ./create.sh UdagramAppNetwork network.yml network_parameters.json
+```
 
 2. setup the server
 
 wait for the network to create succesfully
 
+```
 ./create.sh UdagramAppServer server.yml server_parameters.json
+```
 
 view the loadbalancer url as output from the UdagramAppServer stack
 
