@@ -1,6 +1,8 @@
-Description: >
-    Carlos Rivas / Udacity 2019
+# VICTOR PETER MUTHOMI 
 
+# UDACITY E DEGREE CLOUD DEVOPS ENGINEERING
+
+# username: redx1t
 Parameters:
 
     EnvironmentName:
@@ -8,6 +10,46 @@ Parameters:
         Type: String
 
 Resources:
+  UdacityS3ReadOnlyEC2:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName: 
+                !Sub ${EnvironmentName}-Role
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                -   Effect: Allow
+                    Principal:
+                        Service:
+                        - ec2.amazonaws.com
+                    Action:
+                    - sts:AssumeRole
+            Path: "/"
+  RolePolicies:
+      Type: AWS::IAM::Policy
+      Properties:
+          PolicyName: AmazonS3ReadOnlyAccess
+          PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - 
+                  Effect: Allow
+                  Action: 
+                  -   s3:Get*
+                  -   s3:List*
+                  Resource: 
+                  -   arn:aws:s3:::udacity-demo-1
+                  -   arn:aws:s3:::udacity-demo-1/*
+          Roles:
+          -   Ref: UdacityS3ReadOnlyEC2
+
+  ProfileWithRoles:
+      Type: AWS::IAM::InstanceProfile
+      Properties:
+          Path: "/"
+          Roles:
+          - Ref: UdacityS3ReadOnlyEC2
+  
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -34,8 +76,8 @@ Resources:
           !Sub "${EnvironmentName}-VPCID"
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 8080
-        ToPort: 8080
+        FromPort: 80
+        ToPort: 80
         CidrIp: 0.0.0.0/0
       #this port should be closed once everything is working via an update for security reasons
       - IpProtocol: tcp
@@ -61,8 +103,8 @@ Resources:
           cd /var/www/html
           aws s3 cp s3://udacity-demo-1/udacity.zip .
           unzip -o udacity.zip
-      ImageId: ami-005bdb005fb00e791
-      KeyName: UdacityRedx1t
+      ImageId: ami-00ddb0e5626798373
+      KeyName: vockey
       IamInstanceProfile: !Ref ProfileWithRoles
       SecurityGroups:
       - Ref: WebServerSecGroup
@@ -76,11 +118,11 @@ Resources:
     Properties:
       VPCZoneIdentifier:
       - Fn::ImportValue: 
-      LaunchConfigurationName:
           !Sub "${EnvironmentName}-PRIV-NETS"
-        Ref: WebAppLaunchConfig
-      MinSize: '3'
-      MaxSize: '5'
+      LaunchConfigurationName:
+          Ref: WebAppLaunchConfig
+      MinSize: '4'
+      MaxSize: '6'
       TargetGroupARNs:
       - Ref: WebAppTargetGroup
   WebAppLB:
@@ -100,7 +142,7 @@ Resources:
           Ref: WebAppTargetGroup
       LoadBalancerArn:
         Ref: WebAppLB
-      Port: '80'
+      Port: 80
       Protocol: HTTP
   ALBListenerRule:
       Type: AWS::ElasticLoadBalancingV2::ListenerRule
@@ -121,7 +163,7 @@ Resources:
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 8
       HealthyThresholdCount: 2
-      Port: 8080
+      Port: 80
       Protocol: HTTP
       UnhealthyThresholdCount: 5
       VpcId: 
