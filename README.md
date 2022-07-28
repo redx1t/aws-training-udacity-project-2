@@ -1,3 +1,5 @@
+![flow diagram](https://raw.githubusercontent.com/redx1t/aws-training-udacity-project-2/master/images_on_deployment_process/Udacity%20Infrastructure%20as%20Code%20Image.png)
+
 # HOW TO DEPLOY
 
 clone this repository and navigate to the file root
